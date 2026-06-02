@@ -13,6 +13,7 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.BlockState;
 import net.minecraft.world.phys.AABB;
 
 public class DeepslateFinder extends Module {
@@ -43,7 +44,7 @@ public class DeepslateFinder extends Module {
             for (int y = playerPos.getY() - renderDistance * 16; y < playerPos.getY() + renderDistance * 16; y++) {
                 for (int z = playerPos.getZ() - renderDistance * 16; z < playerPos.getZ() + renderDistance * 16; z++) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    var blockState = mc.level.getBlockState(pos);
+                    BlockState blockState = mc.level.getBlockState(pos);
 
                     // Check if it's a deepslate block with rotated orientation
                     if (isRotatedDeepslate(blockState)) {
@@ -55,7 +56,7 @@ public class DeepslateFinder extends Module {
         }
     }
 
-    private boolean isRotatedDeepslate(var blockState) {
+    private boolean isRotatedDeepslate(BlockState blockState) {
         // Check if block is a deepslate variant
         var block = blockState.getBlock();
         
