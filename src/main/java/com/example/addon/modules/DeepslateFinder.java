@@ -4,6 +4,7 @@ import com.example.addon.AddonTemplate;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.settings.ColorSetting;
+import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -20,6 +21,15 @@ public class DeepslateFinder extends Module {
     private final SettingGroup sgGeneral = this.settings.getDefaultGroup();
     private final SettingGroup sgRender = this.settings.createGroup("Render");
 
+    private final Setting<Integer> range = sgGeneral.add(new IntSetting.Builder()
+        .name("range")
+        .description("How many blocks to scan around you.")
+        .defaultValue(32)
+        .range(8, 256)
+        .sliderRange(8, 256)
+        .build()
+    );
+
     private final Setting<SettingColor> color = sgRender.add(new ColorSetting.Builder()
         .name("color")
         .description("The color of the highlight.")
@@ -33,16 +43,16 @@ public class DeepslateFinder extends Module {
 
     @EventHandler
     private void onRender3d(Render3DEvent event) {
-        // Get the world
-        if (mc.level == null) return;
+        // Get the world and player
+        if (mc.level == null || mc.player == null) return;
 
-        // Search for deepslate blocks in render distance
-        int renderDistance = mc.options.renderDistance().get();
         BlockPos playerPos = mc.player.blockPosition();
+        int range = this.range.get();
 
-        for (int x = playerPos.getX() - renderDistance * 16; x < playerPos.getX() + renderDistance * 16; x++) {
-            for (int y = playerPos.getY() - renderDistance * 16; y < playerPos.getY() + renderDistance * 16; y++) {
-                for (int z = playerPos.getZ() - renderDistance * 16; z < playerPos.getZ() + renderDistance * 16; z++) {
+        // Only scan nearby blocks
+        for (int x = playerPos.getX() - range; x <= playerPos.getX() + range; x++) {
+            for (int y = playerPos.getY() - range; y <= playerPos.getY() + range; y++) {
+                for (int z = playerPos.getZ() - range; z <= playerPos.getZ() + range; z++) {
                     BlockPos pos = new BlockPos(x, y, z);
                     BlockState blockState = mc.level.getBlockState(pos);
 
